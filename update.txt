@@ -1,0 +1,1 @@
+Note: if you update exe then must add update.txt
